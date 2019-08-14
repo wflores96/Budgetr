@@ -1,0 +1,35 @@
+<ng-container *ngIf="(data$ | async) as data">
+    <div class="total-this-month d-flex flex-column align-items-center">
+        <h2>Total Spent This Month</h2>
+        <h1 class="text-success">{{data.total | currency}}</h1>
+    </div>
+
+    <div class="recent-transactions d-flex flex-column align-items-center">
+        <h3 class="">recent transactions</h3>
+        <ul class="list-group">
+            <li *ngFor="let item of data.last5" class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{item.price | currency}} at {{item.name}} on {{item.date.toDate() | date }}</span>
+                <button type="button" class="close" (click)="deleteBudgetItem(item.uid, content)">
+                    <span>&times;</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+</ng-container>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Confirm Delete</h4>
+        <button type="button" class="close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="button-wrapper d-flex flex-diretion-row justify-content-center">
+                <button type="button" class="btn btn-danger btn-lg btn-block" (click)="confirmDelete()">Confirm</button>
+                
+        </div>
+        
+    </div>
+</ng-template>
