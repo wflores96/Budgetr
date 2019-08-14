@@ -6,30 +6,20 @@ import { Aggregate } from '../model/aggregate';
 import { firestore } from 'firebase';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { AuthService } from './auth.service';
-import { switchMap } from 'rxjs/operators';
-import { CALLABLE_FUNCTIONS } from 'src/app/app-constant';
+import { switchMap, shareReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  private _currentUserItems$: Observable<BudgetItem[]>;
   private _aggregate$: Observable<Aggregate>;
 
   constructor(private db: AngularFirestore, private auth: AuthService, private functions: AngularFireFunctions) {
-    this._currentUserItems$ = this.auth.currentFireUser$.pipe(
-      switchMap(user => {
-        return db.collection<BudgetItem>(`budget-items`, ref => ref.where('forUser', '==', user.uid)).valueChanges();
-      })
-    );
     this._aggregate$ = this.auth.currentFireUser$.pipe(
-      switchMap(user => db.doc<Aggregate>(`aggregate/${user.uid}`).valueChanges())
+      switchMap(user => db.doc<Aggregate>(`aggregate/${user.uid}`).valueChanges()),
+      shareReplay(1) // share 
     );
-  }
-
-  public get currentUserItems$(): Observable<BudgetItem[]> {
-    return this._currentUserItems$;
   }
 
   public get currentUserAggregateData$(): Observable<Aggregate> {

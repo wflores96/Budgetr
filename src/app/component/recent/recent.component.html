@@ -8,7 +8,7 @@
         <h3 class="">recent transactions</h3>
         <ul class="list-group">
             <li *ngFor="let item of data.last5" class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{item.price | currency}} at {{item.name}} on {{item.date.toDate() | date }}</span>
+                <span>{{item.price | currency}} at {{item.name}} on {{item.date.toDate() | date :'MMM d' }}</span>
                 <button type="button" class="close" (click)="deleteBudgetItem(item.uid, content)">
                     <span>&times;</span>
                 </button>

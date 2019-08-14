@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { User } from '../model/user';
 import { auth } from 'firebase/app';
@@ -11,26 +11,14 @@ import { auth } from 'firebase/app';
 })
 export class AuthService {
 
-  private _currentUser$: Observable<User>;
+  private _currentFireUser$: Observable<firebase.User>
 
   constructor(private afAuth: AngularFireAuth, private db: AngularFirestore) {
-    this._currentUser$ = this.afAuth.authState.pipe(
-      switchMap((user: firebase.User) => {
-        if(user) {
-          return this.db.doc<User>(`users/${user.uid}`).valueChanges();
-        } else {
-          of(null);
-        }
-      })
-    )
-  }
-
-  public get currentUser$(): Observable<User> {
-    return this._currentUser$;
+    this._currentFireUser$ = afAuth.authState.pipe(shareReplay(1)); // share the most recent value with new subscribers
   }
 
   public get currentFireUser$(): Observable<firebase.User> {
-    return this.afAuth.authState;
+    return this._currentFireUser$;
   }
 
   public get currentUserId(): string {
