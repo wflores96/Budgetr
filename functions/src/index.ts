@@ -75,7 +75,7 @@ export const deleteDoc = functions.firestore.document('budget-items/{documentId}
     });
 });
 
-export const heat = functions.pubsub.schedule("2 * * * *").onRun(async(context) => {
+export const heat = functions.pubsub.schedule("*/2 * * * *").onRun(async(context) => {
     const TEST_ID = 'budget-items/TEST';
 
     // create the document to heat the aggregate fxn
