@@ -92,6 +92,32 @@ export const heat = functions.pubsub.schedule("*/2 * * * *").onRun(async(context
     })
 });
 
+export const api = functions.https.onCall(async(data, context) => {
+    
+    if (!data.endpoint) {
+        console.log('no endpoint in request');
+        return false;
+    }
+    
+    switch(data.endpoint) {
+        case 'hello': {
+            return {
+                data: 'world'
+            }
+        }
+        case 'world': {
+            return {
+                data: 'hello'
+            }
+        }
+        default: {
+            return {
+                data: 'unknown'
+            }
+        }
+    }
+})
+
 // export const migrateMonthly = functions.https.onCall(async(data, context) => {
 //     // update: cron "0 0 1 * *"
 //     if(!context) {

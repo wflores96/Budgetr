@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { AngularFireFunctionsModule, FUNCTIONS_ORIGIN } from '@angular/fire/functions';
 import { environment } from 'src/environments/environment';
 import { LoginComponent } from './component/login/login.component';
 import { AuthService } from './service/auth.service';
@@ -37,7 +37,8 @@ import { RecentComponent } from './component/recent/recent.component';
   ],
   providers: [
     AuthService,
-    DataService
+    DataService,
+    //{ provide: FUNCTIONS_ORIGIN, useValue: 'http://localhost:5001' }
   ],
   bootstrap: [AppComponent]
 })

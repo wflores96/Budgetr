@@ -22,7 +22,6 @@ export class DataService {
       shareReplay(1) // share
     );
 
-
     this._recentTransactions$ = this.auth.currentFireUser$.pipe(
       switchMap(user => db.collection<BudgetItem>('budget-items',
       snapshot => snapshot.where('forUser', '==', user.uid).orderBy('date', 'desc').limit(5)
@@ -55,5 +54,11 @@ export class DataService {
   public deleteItem(id: string): Promise<void> {
     console.log('deleting for ', this.auth.currentUserId);
     return this.db.doc<BudgetItem>(`budget-items/${id}`).delete();
+  }
+
+  public callApi(endpoint: string ) {
+    const caller = this.functions.httpsCallable('api');
+    return caller({endpoint});
+
   }
 }
