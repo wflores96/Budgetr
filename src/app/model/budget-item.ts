@@ -4,7 +4,4 @@ export interface BudgetItem {
     date: firebase.firestore.Timestamp;
     price: number;
     forUser: string;
-    month?: number;
-    day?: number;
-    year?: number;
 }

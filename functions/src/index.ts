@@ -10,15 +10,17 @@ export interface BudgetItem {
     date: admin.firestore.Timestamp;
     price: number;
     forUser: string;
-    month?: number;
-    day?: number;
-    year?: number;
+    forPing?: boolean;
 }
 
 export const aggregate = functions.firestore.document('budget-items/{documentId}').onCreate(async(snapshot, context) => {    
+    const data: BudgetItem = snapshot.data() as any;
+    if(data.forPing) {
+        console.log('function kept warm');
+        return false;
+    }
+
     return firestore.runTransaction(async(transaction) => {
-        
-        const data: BudgetItem = snapshot.data() as any;
         
         const aggregateRef = firestore.doc(`aggregate/${data.forUser}`);
         const aggDoc = await transaction.get(aggregateRef);
@@ -28,15 +30,50 @@ export const aggregate = functions.firestore.document('budget-items/{documentId}
         }
 
         const lastTotal = aggData.total ? aggData.total : 0;
-        const last5 = aggData.last5 ? aggData.last5 : [];
 
         const next = {
             total: lastTotal + data.price,
-            last5: [data, ...last5.slice(0, 4)]
+            
         }
         return transaction.set(aggregateRef, next);
-    })
-})
+    });
+});
+
+export const deleteDoc = functions.firestore.document('budget-items/{documentId}').onDelete(async(snapshot, context) => {
+    const data: BudgetItem = snapshot.data() as any;
+    if(data.forPing) {
+        console.log('function kept warm');
+        return false;
+    }
+
+    return firestore.runTransaction(async(transaction) => {
+        const currMonth = new Date().getMonth();
+        const docMonth = data.date.toDate().getMonth();
+        if(currMonth !== docMonth) {
+            console.log('delete not for same month, ignore');
+            return false;
+        }
+
+        const aggregateRef = firestore.doc(`aggregate/${data.forUser}`);
+        const aggDoc = await transaction.get(aggregateRef);
+        let aggData = aggDoc.data();
+        if(!aggData) {
+            aggData = {};
+        }
+
+        let total: number = aggData.total ? aggData.total : 0;
+
+        if (total > data.price) {
+            total -= data.price;
+        }
+
+        const next = {
+            total
+        }
+
+        return transaction.set(aggregateRef, next);
+    });
+});
 
 // export const migrateMonthly = functions.https.onCall(async(data, context) => {
 //     // update: cron "0 0 1 * *"

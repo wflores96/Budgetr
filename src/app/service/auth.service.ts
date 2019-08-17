@@ -11,7 +11,7 @@ import { auth } from 'firebase/app';
 })
 export class AuthService {
 
-  private _currentFireUser$: Observable<firebase.User>
+  private _currentFireUser$: Observable<firebase.User>;
 
   constructor(private afAuth: AngularFireAuth, private db: AngularFirestore) {
     this._currentFireUser$ = afAuth.authState.pipe(shareReplay(1)); // share the most recent value with new subscribers

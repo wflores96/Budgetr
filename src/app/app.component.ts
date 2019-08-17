@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';;
+import { Observable } from 'rxjs';
 import { AuthService } from './service/auth.service';
 import { Router } from '@angular/router';
 import { DataService } from './service/data.service';

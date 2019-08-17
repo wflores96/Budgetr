@@ -3,6 +3,7 @@ import { DataService } from 'src/app/service/data.service';
 import { Aggregate } from 'src/app/model/aggregate';
 import { Observable } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BudgetItem } from 'functions/src';
 
 @Component({
   selector: 'app-recent',
@@ -11,24 +12,27 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class RecentComponent implements OnInit {
 
-  public data$: Observable<Aggregate>;
-  public uidToDelete: string = '';
+  public aggregate$: Observable<Aggregate>;
+  public recentTransactions$: Observable<BudgetItem[]>;
+  private uidToDelete = '';
 
   constructor(private dataService: DataService, private modalService: NgbModal) { }
 
   ngOnInit() {
-    this.data$ = this.dataService.currentUserAggregateData$;
+    // this.data$ = this.dataService.currentUserAggregateData$;
+    this.aggregate$ = this.dataService.currentUserAggregateData$;
+    this.recentTransactions$ = this.dataService.recentTransactions$;
   }
 
   public deleteBudgetItem(uid: string, content) {
-    console.log(`request for delete of ${uid}`);
     this.uidToDelete = uid;
-    this.modalService.open(content)
+    this.modalService.open(content);
   }
 
   public confirmDelete() {
-    console.log(`confirmed deleting ${this.uidToDelete}`);
+    console.log('deleting', this.uidToDelete);
     this.modalService.dismissAll();
+    this.dataService.deleteItem(this.uidToDelete);
   }
 
 }

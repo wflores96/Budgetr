@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   async login(): Promise<boolean> {
     return this.auth.googleSignin().then(() => {
       return this.router.navigate(['/home']);
-    })
+    });
   }
 
 }
