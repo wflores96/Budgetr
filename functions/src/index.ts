@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { apiHandler } from './controllers/api';
 
 admin.initializeApp()
 const firestore = admin.firestore();
@@ -92,69 +93,4 @@ export const heat = functions.pubsub.schedule("*/2 * * * *").onRun(async(context
     })
 });
 
-export const api = functions.https.onCall(async(data, context) => {
-    
-    if (!data.endpoint) {
-        console.log('no endpoint in request');
-        return false;
-    }
-    
-    switch(data.endpoint) {
-        case 'hello': {
-            return {
-                data: 'world'
-            }
-        }
-        case 'world': {
-            return {
-                data: 'hello'
-            }
-        }
-        default: {
-            return {
-                data: 'unknown'
-            }
-        }
-    }
-})
-
-// export const migrateMonthly = functions.https.onCall(async(data, context) => {
-//     // update: cron "0 0 1 * *"
-//     if(!context) {
-//         console.log('failed, no context')
-//         return false;
-//     }
-//     if(!context.auth) {
-//         console.log('failed, no auth');
-//         return false;
-//     }
-
-//     const SUCCESS_MESSAGE = {data: 'success'};
-//     const FAIL_MESSAGE = {data: 'fail'};
-//     const NOT_NECESSARY_MESSAGE = {data: 'no migration necessary'};
-
-//     const thisUid = context.auth.uid;
-//     return firestore.runTransaction(async transaction => {
-//         const aggRef = firestore.doc(`aggregate/${thisUid}`);
-
-//         const aggregateDoc = await transaction.get(aggRef);
-//         const aggData = aggregateDoc.data();
-//         if(!aggData) {
-//             return FAIL_MESSAGE;
-//         }
-//         const lastTotal = aggData.total || 0;
-//         const lastDate = (aggData.last5[0].date as admin.firestore.Timestamp).toDate();
-//         const lastDateObj = {year: lastDate.getFullYear(), month: lastDate.getMonth()}
-//         const lastDateStr = `${lastDateObj.year}${lastDateObj.month}`;
-//         const currentDate = new Date();
-//         const currentDateObj = {year: currentDate.getFullYear(), month: currentDate.getMonth()}
-
-//         if(currentDateObj.year > lastDateObj.year || (currentDateObj.year === lastDateObj.year && currentDateObj.month > lastDateObj.month)) {
-//             return transaction.update(aggRef, {...aggData, total: 0, past: [{lastDateStr:lastTotal}, aggData.past.slice(0,11)]})
-//         } else {
-//             return NOT_NECESSARY_MESSAGE;
-//         }
-
-
-//     })
-// })
+export const api = functions.https.onCall(apiHandler);
