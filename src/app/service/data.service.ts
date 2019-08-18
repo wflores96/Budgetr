@@ -7,6 +7,7 @@ import { firestore } from 'firebase';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { AuthService } from './auth.service';
 import { switchMap, shareReplay } from 'rxjs/operators';
+import { CALLABLE_FUNCTIONS } from '../app-constant';
 
 @Injectable({
   providedIn: 'root'
@@ -45,10 +46,7 @@ export class DataService {
   }
 
   public checkMigrate() {
-    // const callable = this.functions.httpsCallable(CALLABLE_FUNCTIONS.MIGRATE_MONTHLY);
-    // return callable({});
-
-    return of({data: 'dank'});
+    return this.callApi(CALLABLE_FUNCTIONS.MIGRATE_MONTHLY);
   }
 
   public deleteItem(id: string): Promise<void> {

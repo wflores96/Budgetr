@@ -18,6 +18,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.loggedIn$ = this.auth.authenticated$;
     this.dataService.checkMigrate().subscribe(resp => {
+      console.log('migrate response', resp);
+    }, err => {
+      console.log('received error', err);
     });
   }
 
