@@ -76,21 +76,21 @@ export const deleteDoc = functions.firestore.document('budget-items/{documentId}
     });
 });
 
-export const heat = functions.pubsub.schedule("*/2 * * * *").onRun(async(context) => {
-    const TEST_ID = 'budget-items/TEST';
+// export const heat = functions.pubsub.schedule("*/2 * * * *").onRun(async(context) => {
+//     const TEST_ID = 'budget-items/TEST';
 
-    // create the document to heat the aggregate fxn
-    return firestore.doc(TEST_ID).create({
-        forPing: true
-    })
-    // delete the doc to heat the deleteDoc fxn
-    .then(w => {
-        console.log('ping doc created', w);
-        return firestore.doc(TEST_ID).delete()
-    })
-    .catch(err => {
-        console.log('heat failed with error ', err);
-    })
-});
+//     // create the document to heat the aggregate fxn
+//     return firestore.doc(TEST_ID).create({
+//         forPing: true
+//     })
+//     // delete the doc to heat the deleteDoc fxn
+//     .then(w => {
+//         console.log('ping doc created', w);
+//         return firestore.doc(TEST_ID).delete()
+//     })
+//     .catch(err => {
+//         console.log('heat failed with error ', err);
+//     })
+// });
 
 export const api = functions.https.onCall(apiHandler);
